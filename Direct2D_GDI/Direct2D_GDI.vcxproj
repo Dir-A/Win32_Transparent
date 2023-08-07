@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{71a38a59-2645-47c6-b149-cabe20debe51}</ProjectGuid>
-    <RootNamespace>Directt2DGDI</RootNamespace>
+    <ProjectGuid>{51ff54aa-7eeb-4750-a789-e43a330703d9}</ProjectGuid>
+    <RootNamespace>Direct2DGDI</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
