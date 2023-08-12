@@ -23,7 +23,7 @@ bool EnableAlphaCompositing(HWND hWnd)
 	BOOL is_opaque = false;
 	::DwmGetColorizationColor(&current_color, &is_opaque);
 
-	if (!is_opaque || IsWindows8OrGreater())
+	if (!is_opaque || ::IsWindows8OrGreater())
 	{
 		HRGN region = ::CreateRectRgn(0, 0, -1, -1);
 		DWM_BLURBEHIND bb = { 0 };
@@ -43,6 +43,13 @@ bool EnableAlphaCompositing(HWND hWnd)
 	}
 }
 
+// WS_EX_LAYERED 会对性能造成影响，但是暂时没找到不开启该属性在DWM下的鼠标穿透方法
+bool EnableMouseClickThrough(HWND hWnd)
+{
+	::SetWindowLongPtrW(hWnd, GWL_EXSTYLE, ::GetWindowLongPtr(hWnd, GWL_EXSTYLE) | WS_EX_LAYERED | WS_EX_TRANSPARENT);
+	return ::SetLayeredWindowAttributes(hWnd, 0, 255, LWA_ALPHA);
+}
+
 
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -53,6 +60,7 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		sg_pRenderTarget->BeginDraw();
 		sg_pRenderTarget->Clear(D2D1::ColorF(0.2f, 0.3f, 0.5f, 0.5f));
 		sg_pRenderTarget->EndDraw();
+		return S_OK;
 	}
 	break;
 
@@ -90,6 +98,9 @@ int main()
 
 	// 开启 Alpha 混合
 	EnableAlphaCompositing(hwnd);
+
+	// 开启 点击穿透 (影响渲染性能)
+	// EnableMouseClickThrough(hwnd);
 
 	// 创建Direct2D资源
 	{

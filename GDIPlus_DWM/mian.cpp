@@ -20,7 +20,7 @@ bool EnableAlphaCompositing(HWND hWnd)
 	BOOL is_opaque = false;
 	::DwmGetColorizationColor(&current_color, &is_opaque);
 
-	if (!is_opaque || IsWindows8OrGreater())
+	if (!is_opaque || ::IsWindows8OrGreater())
 	{
 		HRGN region = ::CreateRectRgn(0, 0, -1, -1);
 		DWM_BLURBEHIND bb = { 0 };
@@ -40,6 +40,12 @@ bool EnableAlphaCompositing(HWND hWnd)
 	}
 }
 
+// WS_EX_LAYERED 会对性能造成影响，但是暂时没找到不开启该属性在DWM下的鼠标穿透方法
+bool EnableMouseClickThrough(HWND hWnd)
+{
+	::SetWindowLongPtrW(hWnd, GWL_EXSTYLE, ::GetWindowLongPtr(hWnd, GWL_EXSTYLE) | WS_EX_LAYERED | WS_EX_TRANSPARENT);
+	return ::SetLayeredWindowAttributes(hWnd, 0, 255, LWA_ALPHA);
+}
 
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -89,16 +95,18 @@ int main()
 	// WS_EX_NOACTIVATE 隐藏任务栏图标，组合使用 WS_EX_APPWINDOW  可以使得窗口图标显示在任务栏
 	// WS_EX_NOREDIRECTIONBITMAP DirectComposition相关，提高性能
 	DWORD style = WS_OVERLAPPEDWINDOW;
-	DWORD ex_style_hide = WS_EX_TOPMOST | WS_EX_NOACTIVATE;                // 置顶，隐藏任务栏图标
-	DWORD ex_style_mouse_penetration = WS_EX_TRANSPARENT | WS_EX_TOPMOST;  // 置顶，鼠标穿透
+	DWORD ex_style_hide = WS_EX_TOPMOST | WS_EX_NOACTIVATE; // 置顶，隐藏任务栏图标
 	HWND hWnd = CreateWindowExW
 	(
-		ex_style_hide, wcex.lpszClassName, L"GDI Transparent DWM", style,
+		NULL, wcex.lpszClassName, L"GDI Transparent DWM", style,
 		CW_USEDEFAULT, CW_USEDEFAULT, 1280, 720, nullptr, nullptr, wcex.hInstance, nullptr
 	);
 
 	// 开启 Alpha 混合
 	EnableAlphaCompositing(hWnd);
+
+	// 开启 点击穿透 (影响渲染性能)
+	// EnableMouseClickThrough(hWnd);
 
 	// 显示窗口
 	ShowWindow(hWnd, SW_SHOWNORMAL);
