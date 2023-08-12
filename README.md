@@ -1,5 +1,5 @@
 # Win32_Transparent
-Win32透明窗口实现
+Win32 透明窗口 / 点击穿透 实现
 
 ## Direct2D + DWM
 ![](./image/Direct2D_DWM.png)
