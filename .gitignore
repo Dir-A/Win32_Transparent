@@ -1,0 +1,10 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs
+/Debug
+/Direct2D_DWM/Debug
+/Direct2D_GDI/Debug
+/GDIPlus_DWM/Debug
+/GDIPlus_GDI/Debug
